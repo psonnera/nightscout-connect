@@ -44,6 +44,7 @@ point.
 * `ENABLE=connect` include the keyword `connect` in the `ENABLE` list.
 * Environment variable prefix `CONNECT_`:
   * `CONNECT_SOURCE` - The name for the source of one of the supported inputs.  one of `nightscout`, `dexcomshare`, etc...
+  * `CONNECT_DEBUG` - Set to `true`, `1`, or `yes` to enable detailed debug logging. Default is disabled.
 
 
 ## How to use

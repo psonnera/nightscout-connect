@@ -5,6 +5,7 @@ var axios = require('axios');
 var builder = require('../lib/builder');
 var sources = require('../lib/sources');
 var outputs = require('../lib/outputs');
+var debug = require('../lib/debug');
 
 function sidecarLoop (input, output, capture) {
   
@@ -18,7 +19,7 @@ function sidecarLoop (input, output, capture) {
   // select an available input source implementation based on env
   // variables/config
   var driver = sources(input);
-  console.log("INPUT PARAMS", input);
+  debug("INPUT PARAMS", input);
   var impl = driver(input, axios);
   // var impl = testImpl.fakeFrame({ }, axios);
 
@@ -26,7 +27,7 @@ function sidecarLoop (input, output, capture) {
 
   var built = make( );
   // console.log("BUILDER OUTPUT", built);
-  console.log("BUILDER OUTPUT", JSON.stringify(built, null, 2));
+  debug("BUILDER OUTPUT", JSON.stringify(built, null, 2));
   return built;
 
 }
@@ -40,7 +41,7 @@ function main (argv) {
 
   var endpoint = { name: 'nightscout', url: argv.nightscoutEndpoint, apiSecret: argv.apiSecret };
   var input = { kind: argv.source, url: argv.sourceEndpoint, apiSecret: argv.sourceApiSecret || '' };
-  console.log("CONFIGURED INPUT", input);
+  debug("CONFIGURED INPUT", input);
 
 
   // var things = sidecarLoop(input, output, { dir: argv.dir });
@@ -53,7 +54,7 @@ function main (argv) {
     };
   }
 
-  console.log("CONFIGURED OUTPUT", output_config);
+  debug("CONFIGURED OUTPUT", output_config);
   var output = outputs(output_config)(output_config, axios);
   var capture = { dir: argv.dir };
   var make = builder({ output, capture });
@@ -70,7 +71,7 @@ function main (argv) {
     });
   }
 
-  console.log("INPUT PARAMS", spec, validated.config);
+  debug("INPUT PARAMS", spec, validated.config);
 
   if (!validated.ok) {
     console.log("Invalid, disabling nightscout-connect", validated);
