@@ -73,7 +73,10 @@ function manage (env, ctx) {
 
 
   ctx.bus.on('tick', console.log.bind(console, 'DEBUG nightscout-connect'));
-  ctx.bus.once('data-processed', handle.run);
+  ctx.bus.once('data-processed', function() {
+    console.log('nightscout-connect: data-processed event rcvd, calling handle.run()');
+    handle.run();
+  });
   ctx.bus.once('tearDown', handle.stop);
   // console.log(things);
   var actor = interpret(things);
