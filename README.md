@@ -63,9 +63,33 @@ which variables to set.
 ### From command line
 
 Running from the commandline for development purposes, as a sidecar, for
-example, use `npm install` and consider `npm ln` to place the
+example, use `bun install` and consider `bun link` to place the
 `nightscout-connect` shell script in your path. Once in your path, it will offer `--help` for all subcommands.
 
+<<<<<<< Updated upstream
+=======
+#### Using a .env file (Recommended)
+
+The easiest way to run nightscout-connect is with a `.env` file in the project root:
+
+1. Create a `.env` file with your configuration:
+```bash
+CONNECT_API_SECRET=your_api_secret
+CONNECT_NIGHTSCOUT_ENDPOINT=https://your-nightscout-site.com
+CONNECT_SOURCE=nightscout
+CONNECT_SOURCE_ENDPOINT=https://source-nightscout.com
+CONNECT_SOURCE_API_SECRET=source_api_secret
+```
+
+2. Run the forever command:
+```bash
+bun run bin/nightscout-connect forever
+```
+
+The `.env` file will be automatically loaded (using dotenv) and environment variables will be available to the application.
+
+#### Command-line help
+>>>>>>> Stashed changes
 
 ```
 $ nightscout-connect --help
@@ -87,10 +111,23 @@ Options:
 
 `nightscout-connect` will read the environment variables the same way as Nightscout
 extended variables using the prefix `CONNECT_`.
+<<<<<<< Updated upstream
+=======
+
+#### Alternative: Using env-cmd
+
+For development use with multiple environment files, you can use `env-cmd`:
+
+```bash
+bun add -g env-cmd
+env-cmd -f path/to/your.env nightscout-connect forever
+```
+
+>>>>>>> Stashed changes
 Development use typically consists of commands like this:
 
 ```
-../cgm-remote-monitor/node_modules/.bin/env-cmd -f ../minimed-envs/subject.env nightscout-connect capture logs
+bunx env-cmd -f ../minimed-envs/subject.env nightscout-connect capture logs
 
 ```
 Where `subject.env` typically consists of something like this:
