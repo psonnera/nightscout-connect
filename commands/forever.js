@@ -32,29 +32,32 @@ function sidecarLoop (input, output) {
 }
 
 function main (argv) {
-  console.log("STARTING", argv);
-  // selected output
-  // argv.nightscoutEndpoint;
-  // argv.apiSecret;
-  // 
-  var output = { name: 'nightscout', url: argv.nightscoutEndpoint, apiSecret: argv.apiSecret };
-  console.log("CONFIGURED OUTPUT", output);
-  var input = { kind: argv.source, url: argv.sourceEndpoint, apiSecret: argv.sourceApiSecret };
-  console.log("CONFIGURED INPUT", input);
+  console.log("STARTING forever", { source: argv.source });
+  var output = {
+    name: 'nightscout'
+  , url: argv.nightscoutEndpoint
+  , apiSecret: argv.apiSecret
+  , apiVersion: argv.nightscoutApiVersion
+  , token: argv.nightscoutToken
+  };
+  console.log("CONFIGURED OUTPUT", { name: output.name, url: output.url, apiVersion: output.apiVersion, hasSecret: !!output.apiSecret, hasToken: !!output.token });
+  var input = { kind: argv.source, url: argv.sourceEndpoint, apiSecret: argv.sourceApiSecret, apiVersion: argv.sourceApiVersion };
+  console.log("CONFIGURED INPUT", { kind: input.kind, url: input.url, apiVersion: input.apiVersion, hasSecret: !!input.apiSecret });
 
   var things = sidecarLoop(input, output);
   console.log(things);
   var actor = interpret(things);
   actor.start( );
   actor.send({type: 'START'});
-  setTimeout(( ) => {
-  actor.send({type: 'STOP'});
-  }, 60000 * 5);
 
 }
 
 
 module.exports.command = 'forever [hint]';
 module.exports.describe = 'Runs as a background server forever.'
-module.exports.builder = (yargs) => yargs.option('source', { alias: 'hint', describe: 'source input', default: 'default', choices: Object.keys(sources.kinds)})
+module.exports.builder = (yargs) => yargs
+  .option('source', { alias: 'hint', describe: 'source input', default: 'default', choices: Object.keys(sources.kinds)})
+  .option('sourceApiVersion', { describe: 'Nightscout API version for the source (auto|v1|v3)', choices: ['auto', 'v1', 'v3'] })
+  .option('nightscoutApiVersion', { describe: 'Nightscout API version for the output (v1|v3)', choices: ['v1', 'v3'] })
+  .option('nightscoutToken', { describe: 'Nightscout access token (subject) used for output writes' })
 module.exports.handler = main;

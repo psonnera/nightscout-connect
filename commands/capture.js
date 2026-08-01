@@ -32,15 +32,16 @@ function sidecarLoop (input, output, capture) {
 }
 
 function main (argv) {
-  console.log("STARTING", argv);
-  // selected output
-  // argv.nightscoutEndpoint;
-  // argv.apiSecret;
-  // 
-
-  var endpoint = { name: 'nightscout', url: argv.nightscoutEndpoint, apiSecret: argv.apiSecret };
+  console.log("STARTING capture", { source: argv.source, dir: argv.dir });
+  var endpoint = {
+    name: 'nightscout'
+  , url: argv.nightscoutEndpoint
+  , apiSecret: argv.apiSecret
+  , apiVersion: argv.nightscoutApiVersion
+  , token: argv.nightscoutToken
+  };
   var input = { kind: argv.source, url: argv.sourceEndpoint, apiSecret: argv.sourceApiSecret || '' };
-  console.log("CONFIGURED INPUT", input);
+  console.log("CONFIGURED INPUT", { kind: input.kind, url: input.url, hasSecret: !!input.apiSecret });
 
 
   // var things = sidecarLoop(input, output, { dir: argv.dir });
@@ -53,7 +54,7 @@ function main (argv) {
     };
   }
 
-  console.log("CONFIGURED OUTPUT", output_config);
+  console.log("CONFIGURED OUTPUT", { name: output_config.name, url: output_config.url, apiVersion: output_config.apiVersion, hasSecret: !!output_config.apiSecret, hasToken: !!output_config.token });
   var output = outputs(output_config)(output_config, axios);
   var capture = { dir: argv.dir };
   var make = builder({ output, capture });
@@ -97,6 +98,9 @@ module.exports.describe = 'Runs as a background server forever.'
 module.exports.builder = (yargs) => yargs
   .option('source', { alias: 'hint', describe: 'source input', default: 'default', choices: Object.keys(sources.kinds)})
   .option('output', { describe: "output type", default: "nightscout", choices: [ 'nightscout', 'filesystem' ] })
+  .option('sourceApiVersion', { describe: 'Nightscout API version for the source (auto|v1|v3)', choices: ['auto', 'v1', 'v3'] })
+  .option('nightscoutApiVersion', { describe: 'Nightscout API version for the output (v1|v3)', choices: ['v1', 'v3'] })
+  .option('nightscoutToken', { describe: 'Nightscout access token (subject) used for output writes' })
   .option('fs-prefix', { describe: "filesystem prefix for output", default: 'logs/' })
   .option('fs-label', { describe: "filesystem label for output" })
   .option('dir', { describe: 'output directory', default: './har' })
